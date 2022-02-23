@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="unnamed">
+    <output-path>$PROJECT_DIR$/out/artifacts/unnamed</output-path>
+    <root id="archive" name="unnamed.war">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="e_Project" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="application_server_libraries" name="Tomcat 8.5.34" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="e_Project/web/Web" />
+    </root>
+  </artifact>
+</component>
