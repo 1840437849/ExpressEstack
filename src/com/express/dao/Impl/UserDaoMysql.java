@@ -4,10 +4,8 @@ import com.express.bean.User;
 import com.express.dao.BaseUserDao;
 import com.express.util.DruidUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +25,7 @@ public class UserDaoMysql implements BaseUserDao {
     //根据手机号修改用户信息
     public static final String SQL_UPDATE = "update user set username=?,userPhone=?,idNumber=?,password=? where userPhone=?";
     //根据手机号删除用户信息
-    public static final String SQL_DELETE = "delete from user where=? ";
+    public static final String SQL_DELETE = "delete from user where userPhone=? ";
 
     /**
      * 用于查询数据中全部用户（用户总数，当日新增）
@@ -36,12 +34,12 @@ public class UserDaoMysql implements BaseUserDao {
      * @return [{ size:总数 , day:当日新增 }]
      */
     @Override
-    public Map<String, Integer> console() {
-        Map<String, Integer> map =new HashMap<>();
+    public List<Map<String, Integer>> console() {
+        ArrayList<Map<String, Integer>> data = new ArrayList<>();
         //1.获取连接
         Connection conn = DruidUtil.getConnection();
-        PreparedStatement state =null;
-        ResultSet resultSet =null;
+        PreparedStatement state = null;
+        ResultSet resultSet = null;
         //2.预编译SQL语句
         try {
             state = conn.prepareStatement(SQL_CONSOLE);
@@ -52,16 +50,19 @@ public class UserDaoMysql implements BaseUserDao {
                 //将值提取出来
                 int user_size = resultSet.getInt("user_size");
                 int user_day = resultSet.getInt("user_day");
-                map.put("user_size",user_size);
-                map.put("user_day",user_day);
+                Map data1=new HashMap();
+                data1.put("user_size", user_size);
+                data1.put("user_day", user_day);
+                data.add(data1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            DruidUtil.close(conn,state,resultSet);
+        } finally {
+            //5.关闭数据库流
+            DruidUtil.close(conn, state, resultSet);
         }
-        //5.关闭数据库流
-        return map;
+
+        return data;
     }
 
     /**
@@ -74,30 +75,40 @@ public class UserDaoMysql implements BaseUserDao {
      */
     @Override
     public List<User> findAll(boolean limit, int offset, int pageNumber) {
+        List<User> list = new ArrayList<>();
         //获取连接
         Connection conn = DruidUtil.getConnection();
         //预编译SQL
-        PreparedStatement state =null;
+        PreparedStatement state = null;
+        ResultSet resultSet = null;
         try {
             if (limit) {
                 state = conn.prepareStatement(SQL_FIND_LIMIT);
                 //填充参数
-                state.setInt(1,offset);
-                state.setInt(2,pageNumber);
+                state.setInt(1, offset);
+                state.setInt(2, pageNumber);
             } else {
-                state=conn.prepareStatement(SQL_FIND_ALL);
+                state = conn.prepareStatement(SQL_FIND_ALL);
                 //没有参数需要填充
             }
-            ResultSet resultSet = state.executeQuery();
+            resultSet = state.executeQuery();
             while (resultSet.next()) {
-
+                int id = resultSet.getInt("id");
+                String username = resultSet.getString("username");
+                String userPhone = resultSet.getString("userPhone");
+                String idNumber = resultSet.getString("idNumber");
+                String password = resultSet.getString("password");
+                Date regLstTime = resultSet.getDate("reglsttime");
+                Date loginTime = resultSet.getDate("logintime");
+                User u = new User(id, username, userPhone, idNumber, password, regLstTime, loginTime);
+                list.add(u);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            DruidUtil.close(conn, state, resultSet);
         }
-
-        return null;
+        return list;
     }
 
     /**
@@ -108,6 +119,29 @@ public class UserDaoMysql implements BaseUserDao {
      */
     @Override
     public User findByPhone(String userPhone) {
+        //创建连接
+        Connection conn = DruidUtil.getConnection();
+        PreparedStatement state = null;
+        ResultSet resultSet = null;
+        try {
+            state = conn.prepareStatement(SQL_BY_PHONE);
+            state.setString(1, userPhone);
+            resultSet = state.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String username = resultSet.getString("username");
+                String idNumber = resultSet.getString("idNumber");
+                String password = resultSet.getString("password");
+                Date regLstTime = resultSet.getDate("reglsttime");
+                Date loginTime = resultSet.getDate("logintime");
+                User u = new User(id, username, userPhone, idNumber, password, regLstTime, loginTime);
+                return u;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            DruidUtil.close(conn,state,resultSet);
+        }
         return null;
     }
 
@@ -119,6 +153,21 @@ public class UserDaoMysql implements BaseUserDao {
      */
     @Override
     public boolean insert(User u) {
+        //接收参数
+        Connection conn = DruidUtil.getConnection();
+        PreparedStatement state = null;
+        try {
+            state = conn.prepareStatement(SQL_INSERT);
+            state.setString(1, u.getUsername());
+            state.setString(2, u.getUserPhone());
+            state.setString(3, u.getIdNumber());
+            state.setString(4, u.getPassword());
+            return state.executeUpdate() > 0 ? true : false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DruidUtil.close(conn, state, null);
+        }
         return false;
     }
 
@@ -131,6 +180,22 @@ public class UserDaoMysql implements BaseUserDao {
      */
     @Override
     public boolean update(String userPhone, User newUser) {
+        //接收参数
+        Connection conn = DruidUtil.getConnection();
+        PreparedStatement state = null;
+        try {
+            state = conn.prepareStatement(SQL_UPDATE);
+            state.setString(1, newUser.getUsername());
+            state.setString(2, newUser.getUserPhone());
+            state.setString(3, newUser.getIdNumber());
+            state.setString(4, newUser.getPassword());
+            state.setString(5, newUser.getUserPhone());
+            return state.executeUpdate() > 0 ? true : false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DruidUtil.close(conn, state, null);
+        }
         return false;
     }
 
@@ -142,6 +207,18 @@ public class UserDaoMysql implements BaseUserDao {
      */
     @Override
     public boolean delete(String userPhone) {
+        //接收参数
+        Connection conn = DruidUtil.getConnection();
+        PreparedStatement state = null;
+        try {
+            state = conn.prepareStatement(SQL_DELETE);
+            state.setString(1,userPhone);
+            return state.executeUpdate() > 0 ? true : false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DruidUtil.close(conn, state, null);
+        }
         return false;
     }
 }

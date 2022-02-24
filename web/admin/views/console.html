@@ -20,7 +20,7 @@
                             <div class="meta">
                                 <span>用户人数</span>
                             </div>
-                            <div class="total">6666</div>
+                            <div id="user_size" class="total">-</div>
                         </div>
                     </div>
                     <div class="chart-body">
@@ -30,7 +30,7 @@
                     <div class="chart-footer">
                         <div class="field">
                             <span>日注册量</span>
-                            <span>666</span>
+                            <span id="user_day">-</span>
                         </div>
                     </div>
                 </div>
@@ -143,10 +143,16 @@
                 $("#data2_day").html(data.data[1].data2_day);
             }
         }, "JSON");
-        $.post("/courier/console.do",null,function (data){
-            if (data.status==0) {
+        $.post("/courier/console.do", null, function (data) {
+            if (data.status == 0) {
                 $("#courier_size").html(data.data[0].courier_size);
                 $("#courier_day").html(data.data[0].courier_day);
+            }
+        }, "JSON");
+        $.post("/user/console.do", null, function (data) {
+            if (data.status == 0) {
+                $("#user_size").html(data.data[0].user_size);
+                $("#user_day").html(data.data[0].user_day);
             }
         },"JSON");
     });

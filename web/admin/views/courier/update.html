@@ -62,20 +62,6 @@
             var phone = $("#phone").val();
             $.getJSON("/courier/find.do",{phone:phone},function (data){
                 layer.close(windowId);
-                //返回的格式示例：
-                /*{
-                    "status": 0,
-                    "result": "查询成功！",
-                    "data": {
-                        "id": 2,
-                        "username": "毕文超",
-                        "userPhone": "15350210273",
-                        "idNumber": "360122200204206919",
-                        "password": "1840437849@zyx",
-                        "courierSendNumber": "0",
-                        "regLstTime": "2月 13, 2022"
-                    }
-                }*/
                 layer.msg(data.result);
                 if (data.status==0) {
                     //查询成功

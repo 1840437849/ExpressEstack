@@ -114,6 +114,7 @@
                 layer.msg(data.result);
                 if(data.status == 0){
                     $(".header:eq(1),.content:eq(1)").hide();
+                    $("input:eq(0)").val("");
                 }
             });
         });

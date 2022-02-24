@@ -56,7 +56,7 @@
             var userPhone = $("input:eq(1)").val();
             var idNumber = $("input:eq(2)").val();
             var password = $("input:eq(3)").val();
-            //通过Ajax向服务器发送数据 参数：1:请求地址 2:输入框参数 3: 回调函数
+
             $.post("/courier/insert.do",{
                 username:username,
                 userPhone:userPhone,

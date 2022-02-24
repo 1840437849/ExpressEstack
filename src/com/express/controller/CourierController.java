@@ -1,14 +1,14 @@
 package com.express.controller;
 
-import com.express.bean.Courier;
-import com.express.bean.Message;
-import com.express.bean.ResultData;
+import com.express.bean.*;
 import com.express.mvc.ResponseBody;
 import com.express.service.CourierService;
+import com.express.util.DataFormatUtil;
 import com.express.util.JSONUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +24,7 @@ public class CourierController {
     public String console(HttpServletRequest req, HttpServletResponse resp) {
         //1.得到数据
         List<Map<String, Integer>> data = CourierService.console();
+        System.out.println("进入了控制台");
         //2.创建消息对象
         Message msg = new Message();
         //判断数据中是否有值
@@ -49,13 +50,21 @@ public class CourierController {
         int pageNumber = Integer.parseInt(req.getParameter("pageNumber"));
         //3.进行分页查询
         List<Courier> list = CourierService.findAll(true, offset, pageNumber);
+        List<BootStrapTableCourier> list2 = new ArrayList<>();
+        for (Courier c : list) {
+            //调用时间格式化工具类将数据转为String类型并将时间格式为 yyyy-MM-dd HH:mm:ss
+            String regLstTime = DataFormatUtil.format(c.getRegLstTime());
+            String loginTime= c.getLoginTime()==null?"从未登录":DataFormatUtil.format(c.getLoginTime());
+            BootStrapTableCourier c2=new BootStrapTableCourier(c.getId(),c.getUsername(),c.getUserPhone(),c.getIdNumber(),c.getPassword(),c.getCourierSendNumber(),regLstTime,loginTime);
+            list2.add(c2);
+        }
         List<Map<String, Integer>> console = CourierService.console();
         //获取集合console中0下标的courier_size的值
         Integer total = console.get(0).get("courier_size");
         //4.将集合封装为BootStrap-Table所识别的格式
-        ResultData<Courier> data = new ResultData<>();
+        ResultData<BootStrapTableCourier> data = new ResultData<>();
         //这里要封装的数据就是数据的集合
-        data.setRows(list);
+        data.setRows(list2);
         //另一个是数据的总数量
         data.setTotal(total);
         //5.将数据转换成JSON格式

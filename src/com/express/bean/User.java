@@ -4,13 +4,16 @@ import java.util.Date;
 import java.util.Objects;
 
 public class User {
-    private String id;          //编号    主键
+    private int id;          //编号    主键
     private String username;   //用户名
     private String userPhone;   //用户手机号
     private String idNumber;    //身份证号
     private String password;    //密码
     private Date regLstTime;    //用户注册时间
     private Date loginTime;     //上一次登陆时间
+
+    public User() {
+    }
 
     //插入用到
     public User(String username, String userPhone, String idNumber, String password) {
@@ -46,11 +49,11 @@ public class User {
                 '}';
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -102,7 +105,7 @@ public class User {
         this.loginTime = loginTime;
     }
 
-    public User(String id, String username, String userPhone, String idNumber, String password, Date regLstTime, Date loginTime) {
+    public User(int id, String username, String userPhone, String idNumber, String password, Date regLstTime, Date loginTime) {
         this.id = id;
         this.username = username;
         this.userPhone = userPhone;
