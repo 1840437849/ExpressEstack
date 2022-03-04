@@ -7,8 +7,6 @@ import com.express.mvc.ResponseBody;
 import com.express.service.CourierService;
 import com.express.service.UserService;
 import com.express.util.JSONUtil;
-import com.express.util.RandomUtil;
-import com.express.util.SMSUtil;
 import com.express.util.UserUtil;
 
 import javax.servlet.http.HttpServletRequest;
