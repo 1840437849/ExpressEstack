@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/list.css"/>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/bootstrap-table.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/bootstrap-table.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/locale/bootstrap-table-zh-CN.min.js"></script>
+
+</head>
+<body>
+<table id="express_list"></table>
+<script>
+    $(function () {
+        $("#express_list").bootstrapTable({
+            //请求地址
+            url: "/express/list.do",
+            //是否显示行的间隔
+            striped: true,
+            //初始化加载的第几页
+            pageNumber: 1,
+            //是否分页
+            pagination:true,
+            //服务器分页
+            sidePagination: 'server',
+            //每页显示数量
+            pageSize: 5,
+            //单页记录数
+            pageList: [5, 10, 20],
+            //是否显示刷新按钮
+            showRefresh: true,
+            //将值传到后台的list.do的方法中
+            queryParams: function (params) {
+                var temp = {
+                    //具体要知道前台用户点的是第几页是通过bootstarp
+                    offset: params.offset,
+                    pageNumber: params.limit
+                };
+                //这样就将参数给到了服务器
+                return temp;
+            },
+            //对列进行配置
+            columns:[
+                {
+                    //显示的文字，对应服务器中的id
+                    title:'编号',
+                    //把id的数据取出来，以编号显示
+                    field:'id',
+
+                },
+                {
+                    //显示的文字，对应服务器中的number
+                    title:'快递单号',
+                    //把number的数据取出来，以编号显示
+                    field:'number',
+                },
+                {
+                    //显示的文字，对应服务器中的username
+                    title:'昵称',
+                    //把username的数据取出来，以编号显示
+                    field:'username',
+                },
+                {
+                    //显示的文字，对应服务器中的userPhone
+                    title:'用户手机号',
+                    //把userPhone的数据取出来，以编号显示
+                    field:'userPhone',
+                },
+                {
+                    //显示的文字，对应服务器中的company
+                    title:'快递公司',
+                    //把company的数据取出来，以编号显示
+                    field:'company',
+                },
+                {
+                    //显示的文字，对应服务器中的code
+                    title:'取件码',
+                    //把code的数据取出来，以编号显示
+                    field:'code',
+                },
+                {
+                    //显示的文字，对应服务器中的inTime
+                    title:'到货时间',
+                    //把inTime的数据取出来，以编号显示
+                    field:'inTime',
+                },
+                {
+                    //显示的文字，对应服务器中的outTime
+                    title:'取件时间',
+                    //把outTime的数据取出来，以编号显示
+                    field:'outTime',
+                },
+                {
+                    //显示的文字，对应服务器中的status
+                    title:'快递状态',
+                    //把status的数据取出来，以编号显示
+                    field:'status',
+                },
+                {
+                    //显示的文字，对应服务器中的outTime
+                    title:'录入人手机号',
+                    //把outTime的数据取出来，以编号显示
+                    field:'sysPhone',
+                },
+            ]
+        });
+    });
+</script>
+</body>
+</html>

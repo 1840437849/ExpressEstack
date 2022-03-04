@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../css/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/add.css"/>
+</head>
+<body>
+<div id="app">
+    <div class="header">
+        <span>添加快递员</span>
+    </div>
+    <div class="content">
+        <table>
+            <tr>
+                <td class="text-right">姓名</td>
+                <td class="content_right"><input class="input" name="username" placeholder="请输入姓名"></td>
+            </tr>
+            <tr>
+                <td class="text-right">手机号码</td>
+                <td class="content_right"><input class="input" name="userPhone" placeholder="请输入手机号"></td>
+            </tr>
+            <tr>
+                <td class="text-right">身份证号码</td>
+                <td class="content_right"><input class="input" name="idNumber" placeholder="请输入身份证号码"></td>
+            </tr>
+            <tr>
+                <td class="text-right">密码</td>
+                <td class="content_right"><input class="input" name="password" placeholder="请输入密码"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="content_right"><span class="btn btn-info" id="insert">立即提交</span> <span class="btn">重置</span>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+<script src="../../assets/layui.all.js"></script>
+<script src="/qrcode/jquery2.1.4.js"></script>
+<script src="/layer/layer.js"></script>
+<script>
+    var form = layui.form
+        , layer = layui.layer;
+</script>
+<script>
+    $(function () {
+        //点击立即提交触发单击事件
+        $("#insert").click(function (){
+            //当点击提交的时候第一件事情开始转圈
+            var windowId =layer.load();
+            //首先要拿到四个输入框中的内容，拿到后进行发送服务器
+            var username = $("input:eq(0)").val();//这句话的意思是找第0个输入框所输入的内容
+            var userPhone = $("input:eq(1)").val();
+            var idNumber = $("input:eq(2)").val();
+            var password = $("input:eq(3)").val();
+
+            $.post("/courier/insert.do",{
+                username:username,
+                userPhone:userPhone,
+                idNumber:idNumber,
+                password:password
+            },function (data){  //服务器回复的数据会到这里来
+                //服务器数据一回复，停止转圈
+                layer.close(windowId);
+                layer.msg(data.result);
+                if (data.status == 0) {
+                    //录入成功，将输入框内容清空
+                    $("input").val(""); //将所有input置空
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
