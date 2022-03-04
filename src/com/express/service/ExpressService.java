@@ -64,6 +64,17 @@ public class ExpressService {
     }
 
     /**
+     * 根据用户的手机号、状态码查询快递信息
+     * 因为一个人可能有多个快递，所以定义一个集合
+     * @param userPhone 用户手机号
+     * @param status 用户状态码
+     * @return 查询的快递信息列表
+     */
+    public static List<Express> findByUserPhoneAndStatus(String userPhone,int status) {
+        return dao.findByUserPhoneAndStatus(userPhone,status);
+    }
+
+    /**
      * 根据录入人的手机号查询快递信息
      * 因为一个人可能有多个快递，所以定义一个集合
      *

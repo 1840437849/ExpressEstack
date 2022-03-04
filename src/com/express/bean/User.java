@@ -11,8 +11,16 @@ public class User {
     private String password;    //密码
     private Date regLstTime;    //用户注册时间
     private Date loginTime;     //上一次登陆时间
-
+    private boolean user;       //表示身份是用户
     public User() {
+    }
+
+    public boolean isUser() {
+        return user;
+    }
+
+    public void setUser(boolean user) {
+        this.user = user;
     }
 
     //插入用到

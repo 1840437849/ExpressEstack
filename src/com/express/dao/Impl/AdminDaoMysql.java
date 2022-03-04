@@ -16,7 +16,6 @@ public class AdminDaoMysql implements BaseAdminDao {
 
     /**
      * 根据用户名，更新登陆时间和登陆IP
-     *
      * @param username 用户名
      * @param date     登陆时间
      * @param ip       登陆ip
