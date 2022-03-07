@@ -51,7 +51,8 @@
             </tr>
             <tr>
                 <td></td>
-                <td class="content_right"><span class="btn btn-info" id="delete">立即删除</span> <span class="btn">重置</span></td>
+                <td class="content_right"><span class="btn btn-info" id="delete">立即删除</span> <span class="btn">重置</span>
+                </td>
             </tr>
         </table>
     </div>
@@ -62,11 +63,11 @@
 <script>
     $(".header:eq(1),.content:eq(1)").hide();
     var expressId = null;
-    $(function(){
-        $("#find").click(function(){
+    $(function () {
+        $("#find").click(function () {
             var windowId = layer.load();
             var number = $("#number").val();
-            $.getJSON("/express/find.do",{number:number},function(data){
+            $.getJSON("/express/find.do", {number: number}, function (data) {
                 //在接收到服务器传回的消息后，第一时间关闭load()
                 layer.close(windowId);
                 /**
@@ -88,18 +89,18 @@
 					}
                  */
                 layer.msg(data.result);
-                if(data.status == 0){
+                if (data.status == 0) {
                     $(".header:eq(1),.content:eq(1)").fadeIn(1000);
                     expressId = data.data.id;
                     $("input:eq(1)").val(data.data.number);
                     $("input:eq(2)").val(data.data.company);
                     $("input:eq(3)").val(data.data.username);
                     $("input:eq(4)").val(data.data.userPhone);
-                    $("input:eq(1),input:eq(2),input:eq(3),input:eq(4)").prop("disabled",true)
-                    if(data.data.status == 0){
+                    $("input:eq(1),input:eq(2),input:eq(3),input:eq(4)").prop("disabled", true)
+                    if (data.data.status == 0) {
                         //未签收
                         $("#status").html("未签收");
-                    }else{
+                    } else {
                         //已签收
                         $("#status").html("已签收");
                     }
@@ -107,16 +108,19 @@
             })
         });
 
-        $("#delete").click(function(){
-            var windowId = layer.load();
-            $.getJSON("/express/delete.do",{id:expressId},function(data){
-                layer.close(windowId);
-                layer.msg(data.result);
-                if(data.status == 0){
-                    $(".header:eq(1),.content:eq(1)").hide();
-                    $("input:eq(0)").val("");
-                }
-            });
+        $("#delete").click(function () {
+            if (confirm("确定要删除吗?")) {
+                var windowId = layer.load();
+                $.getJSON("/express/delete.do", {id: expressId}, function (data) {
+                    layer.close(windowId);
+                    layer.msg(data.result);
+                    if (data.status == 0) {
+                        $(".header:eq(1),.content:eq(1)").hide();
+                        $("input:eq(0)").val("");
+                    }
+                });
+            }
+
         });
     });
 </script>

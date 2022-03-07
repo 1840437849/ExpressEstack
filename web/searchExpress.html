@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Insert title here</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <style type="text/css">
+    body{
+
+      margin: 0;
+      padding: 0;
+      background-color: #eeeeee;
+      font-family: "楷体";
+    }
+    .item{
+
+      margin: 20px;
+      margin-bottom: 50px;
+    }
+    .imte_top{
+
+      text-align: center;
+    }
+    .imte_top>span{
+
+      font-size:14px;
+      display: inline-block;
+      padding: 5px 12px;
+      background-color: #ddd;
+      color:#fff;
+      border-radius: 5px;
+    }
+    .item_content{
+
+      background-color: #fff;
+      padding: 25px 15px;
+      margin-top: 6px;
+    }
+    .item_content_top_1{
+
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .item_content_top_2{
+
+      color:#eee;
+      font-size: 14px;
+      margin: 5px 0px;
+    }
+    .item_content_top_3{
+
+      margin: 10px 0px;
+    }
+    .item_content_top_4{
+
+      margin: 10px 0px;
+    }
+    .item_content_bottom>a{
+
+      text-decoration: none;
+      color:#33e;
+    }
+  </style>
+</head>
+<body>
+<div id="status0Content" class="content"></div>
+<div id="status1Content" class="content"></div>
+</body>
+<script src="js/jquery.min.js"></script>
+<script src="layer/layer.js"></script>
+<script>
+  $(function () {
+    $.getJSON("/wx/findSearchExpress.do",null,function (data) {
+      if (data == null){
+        alert("查询无结果")
+      }
+      var e = data.data;
+      console.log(e.status);
+      if (e.status == "待取件"){
+        // 未取件
+        var item = '<div class="item">\n' +
+                '\t\t\t<div class="imte_top"><span>'+e.inTime+'</span></div>\n' +
+                '\t\t\t<div class="item_content">\n' +
+                '\t\t\t\t<div class="item_content_top">\n' +
+                '\t\t\t\t\t<div class="item_content_top_1">取件通知</div>\n' +
+                '\t\t\t\t\t<div class="item_content_top_2">'+e.inTime+'</div>\n' +
+                '\t\t\t\t\t<div class="item_content_top_3">您有一个包裹到e栈了!</div>\n' +
+                '\t\t\t\t\t<div class="item_content_top_4">\n' +
+                '\t\t\t\t\t\t取件码:<span style="color:#05a">'+e.code+'</span><br>\n' +
+                '\t\t\t\t\t\t快递公司:'+e.company+'<br>\n' +
+                '\t\t\t\t\t\t运单号码:'+e.number+'<br>\n' +
+                '\t\t\t\t\t\t站点电话:'+e.sysPhone+'<br>\n' +
+                '\t\t\t\t\t</div>\n' +
+                '\t\t\t\t</div>\n' +
+                '\t\t\t\t<hr>\n' +
+                '\t\t\t\t<div class="item_content_bottom">\n' +
+                '\t\t\t\t\t<a href="/wx/createQrcode.do?type=express&code='+e.code+'">二维码</a>\n' +
+                '\t\t\t\t</div>\n' +
+                '\t\t\t</div>\n' +
+                '\t\t</div>';
+
+        $("#status0Content").append($(item));
+      }else{
+
+        var item = '<div class="item">\n' +
+                '\t\t\t<div class="imte_top"><span>'+ e.outTime +'</span></div>\n' +
+                '\t\t\t<div class="item_content">\n' +
+                '\t\t\t\t<div class="item_content_top">\n' +
+                '\t\t\t\t\t<div class="item_content_top_1">取件成功通知</div>\n' +
+                '\t\t\t\t\t<div class="item_content_top_2">'+ e.outTime +'</div>\n' +
+                '\t\t\t\t\t<div class="item_content_top_3">您有一个包裹从e栈取出了!</div>\n' +
+                '\t\t\t\t\t<div class="item_content_top_4">\n' +
+                '\t\t\t\t\t\t快递公司:'+ e.company +'<br>\n' +
+                '\t\t\t\t\t\t运单号码:'+ e.number +'<br>\n' +
+                '\t\t\t\t\t\t站点电话:'+ e.sysPhone +'<br>\n' +
+                '\t\t\t\t\t</div>\n' +
+                '\t\t\t\t</div>\n' +
+                '\t\t\t\t<hr>\n' +
+                '\t\t\t\t<div class="item_content_bottom">\n' +
+                '\t\t\t\t\t<a href="#">有疑问 ? 点了也没用</a>\n' +
+                '\t\t\t\t</div>\n' +
+                '\t\t\t</div>\n' +
+                '\t\t</div>';
+        $("#status1Content").append($(item));
+      }
+    });
+  });
+</script>
+
+</html>

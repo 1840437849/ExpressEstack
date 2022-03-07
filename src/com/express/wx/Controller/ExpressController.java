@@ -10,6 +10,7 @@ import com.express.util.UserUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,13 +23,13 @@ public class ExpressController {
     public String findByUserPhone(HttpServletRequest req, HttpServletResponse resp) {
         //拿到用户对象
         Object user = UserUtil.getWxUser(req.getSession());
-        String userPhone ="";
+        String userPhone = "";
         if (user instanceof User) {
             User wxUser = (User) user;
             //获取手机号
             userPhone = wxUser.getUserPhone();
         } else if (user instanceof Courier) {
-            Courier wxUser= (Courier) user;
+            Courier wxUser = (Courier) user;
             userPhone = wxUser.getUserPhone();
         }
         //拿到用户信息
@@ -81,8 +82,8 @@ public class ExpressController {
             Object[] s0 = status0Express.toArray();
             Object[] s1 = status1Express.toArray();
             Map map = new HashMap();
-            map.put("status0",s0);
-            map.put("status1",s1);
+            map.put("status0", s0);
+            map.put("status1", s1);
             msg.setData(map);
         }
         //因为只要数据需要传过去，不必直接将整个msg传过去
@@ -91,7 +92,7 @@ public class ExpressController {
     }
 
     @ResponseBody("/wx/userExpressList.do")
-    public String expressList(HttpServletRequest req,HttpServletResponse resp){
+    public String expressList(HttpServletRequest req, HttpServletResponse resp) {
         //当用户访问到的时候，就去获取用户的手机号码
         String userPhone = req.getParameter("userPhone");
         //此时查询到的集合就是未取件的内容
@@ -117,6 +118,52 @@ public class ExpressController {
             msg.setStatus(0);
             msg.setResult("查询成功！");
             msg.setData(list2);
+        }
+        return JSONUtil.toJSON(msg);
+    }
+
+    /**
+     * 根据快递单号查询快递
+     *
+     * @param req
+     * @param resp
+     * @return
+     */
+    @ResponseBody("/wx/searchExpress.do")
+    public String searchExpress(HttpServletRequest req, HttpServletResponse resp) {
+        String number = req.getParameter("expressNum");
+        Express e = ExpressService.findByNumber(number);
+        Message msg = new Message();
+        if (e != null) {
+            HttpSession session = req.getSession();
+            session.setAttribute("searchExpress",e);
+        }
+        msg.setStatus(0);
+        msg.setResult("查询成功");
+        msg.setData(e);
+        String json = JSONUtil.toJSON(msg);
+        return json;
+    }
+
+    @ResponseBody("/wx/findSearchExpress.do")
+    public String findSearchExpress(HttpServletRequest req, HttpServletResponse resp) {
+        //拿到session中的快递数据
+        Express e = (Express) req.getSession().getAttribute("searchExpress");
+        Message msg = new Message();
+        if (e != null) {
+            //调用时间格式化工具类将数据转为String类型并将时间格式为 yyyy-MM-dd HH:mm:ss
+            String inTime = DataFormatUtil.format(e.getInTime());
+            //如果出库时间为空的话，代表未出库，否则返回出库
+            String outTime = e.getOutTime() == null ? "未出库" : DataFormatUtil.format(e.getOutTime());
+            String status = e.getStatus() == 0 ? "待取件" : "已取件";
+            String code = e.getCode() == null ? "已取件" : e.getCode();
+            BootStrapTableExpress e2 = new BootStrapTableExpress(e.getId(), e.getNumber(), e.getUsername(), e.getUserPhone(), e.getCompany(), code, inTime, outTime, status, e.getSysPhone());
+            msg.setStatus(0);
+            msg.setResult("查询成功");
+            msg.setData(e2);
+        } else {
+            msg.setStatus(-1);
+            msg.setResult("查询失败，请输入正确的快递单号");
         }
         return JSONUtil.toJSON(msg);
     }

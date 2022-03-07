@@ -193,32 +193,33 @@
     $(function () {
         //这样就可以在点击立即提交时去执行这个函数
         $("#form").submit(function () {
-            //获取窗口id
-            var windowId = layer.load();
-            //在函数中只要return false就不会提交过去
-            //首先要拿到四个输入框中的内容，拿到后进行发送服务器
-            var number = $("input:eq(0)").val();//这句话的意思是找第0个输入框所输入的内容
-            var company = $("input:eq(1)").val();
-            var username = $("input:eq(2)").val();
-            var userPhone = $("input:eq(3)").val();
-            //通过ajax向服务器发送数据
-            $.post("/express/insert.do", {
-                    number:number,
-                    company:company,
-                    username:username,
-                    userPhone:userPhone
-                },function (data){  //服务器回复的内容就到了这个data里面
-                layer.close(windowId);
-                layer.msg(data.result)
-                if (data.status == 0) {
-                    //录入成功,接下来将输入框恢复默认
-                    $("input").val(""); //给所有的input设置为空
-                    $("input:eq(1)").val("顺丰速运");//单独给第二个输入框设置默认值顺丰速运
-                } else {
-                    //录入失败
-                }
-            },"JSON");
-            return false;
+                //获取窗口id
+                var windowId = layer.load();
+                //在函数中只要return false就不会提交过去
+                //首先要拿到四个输入框中的内容，拿到后进行发送服务器
+                var number = $("input:eq(0)").val();//这句话的意思是找第0个输入框所输入的内容
+                var company = $("input:eq(1)").val();
+                var username = $("input:eq(2)").val();
+                var userPhone = $("input:eq(3)").val();
+                //通过ajax向服务器发送数据
+                $.post("/express/insert.do", {
+                    number: number,
+                    company: company,
+                    username: username,
+                    userPhone: userPhone
+                }, function (data) {  //服务器回复的内容就到了这个data里面
+                    layer.close(windowId);
+                    layer.msg(data.result)
+                    if (data.status == 0) {
+                        //录入成功,接下来将输入框恢复默认
+                        $("input").val(""); //给所有的input设置为空
+                        $("input:eq(1)").val("顺丰速运");//单独给第二个输入框设置默认值顺丰速运
+                    } else {
+                        //录入失败
+                    }
+                }, "JSON");
+                return false;
+
         });
     });
 </script>

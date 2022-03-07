@@ -1,9 +1,6 @@
 package com.express.wx.Controller;
 
-import com.express.bean.BootStrapTableExpress;
-import com.express.bean.Express;
-import com.express.bean.Message;
-import com.express.bean.User;
+import com.express.bean.*;
 import com.express.mvc.ResponseBody;
 import com.express.mvc.ResponseView;
 import com.express.service.ExpressService;
@@ -19,10 +16,10 @@ public class QRCodeController {
     @ResponseView("/wx/createQrcode.do")
     public String createQrCode(HttpServletRequest req, HttpServletResponse resp) {
         String code = req.getParameter("code");
+        // 通过快递列表点进来是express，通过主页点进来是user
         String type = req.getParameter("type");
         String QrcodeContent = null;  //二维码展示的消息
         String userPhone = null;
-        User u =null;
         if ("express".equals(type)) {
             //快递二维码(只显示单个快递)
             //code
@@ -32,10 +29,13 @@ public class QRCodeController {
             //userPhone
             Object wxUser = UserUtil.getWxUser(req.getSession());//拿到微信的登陆用户
             if (wxUser instanceof User){
-                u = (User) wxUser;
+                User u=(User) wxUser;
+                userPhone = u.getUserPhone();
+            } else if (wxUser instanceof Courier) {
+                Courier c = (Courier) wxUser;
+                userPhone = c.getUserPhone();
             }
-            userPhone = u.getUserPhone();
-            QrcodeContent = "userPhone" + userPhone;
+            QrcodeContent = "userPhone_" + userPhone;
         }
         HttpSession session = req.getSession();
         session.setAttribute("qrcode", QrcodeContent);

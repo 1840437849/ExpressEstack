@@ -18,6 +18,8 @@ public class CourierDaoMysql implements BaseCourierDao {
     public static final String SQL_FIND_ALL = "select * from courier";
     //用于分页查询数据库中的快递员信息
     public static final String SQL_FIND_LIMIT = "select * from courier limit ?,?";
+    //用户模糊查询
+    public static StringBuffer SQL_FIND_vague=new StringBuffer("select * from courier where 1=1");
     //根据手机号查询快递员信息
     public static final String SQL_FIND_BY_PHONE = "select * from courier where userPhone=?";
     //添加快递员

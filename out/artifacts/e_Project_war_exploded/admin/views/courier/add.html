@@ -46,32 +46,79 @@
         , layer = layui.layer;
 </script>
 <script>
+    function checkName() {
+        var userName = $("input:eq(0)").val();
+        //判断当前用户名是否为空
+        if (userName == null || userName.length == 0) {
+            alert("用户名有误");
+            console.log("false");
+            return false;
+        }
+        console.log("true");
+        return true;
+    }
+
+    function checkPhone() {
+        var userPhone = $("input:eq(1)").val();
+        var reg = /^1[3456789]\d{9}$/;
+        //判断是否匹配该正则
+        if (!reg.test(userPhone)) {
+            alert("手机号码有误！");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function checkIdNumber() {
+        var userIdNumber = $("input:eq(2)").val();
+        var reg = /^[1-9]\d{5}(18|19|20|(3\d))\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+        if (!reg.test(userIdNumber)) {
+            alert("身份证号码有误");
+            return false;
+        }
+        return true;
+    }
+
+    function checkPassword() {
+        var userPassword = $("input:eq(3)").val();
+        //密码长度为3-20的任意数字字母下划线
+        var reg = /^\w{3,20}$/;
+        if (!reg.test(userPassword)) {
+            alert("密码有误");
+            return false;
+        }
+        return true;
+    }
     $(function () {
         //点击立即提交触发单击事件
-        $("#insert").click(function (){
-            //当点击提交的时候第一件事情开始转圈
-            var windowId =layer.load();
-            //首先要拿到四个输入框中的内容，拿到后进行发送服务器
-            var username = $("input:eq(0)").val();//这句话的意思是找第0个输入框所输入的内容
-            var userPhone = $("input:eq(1)").val();
-            var idNumber = $("input:eq(2)").val();
-            var password = $("input:eq(3)").val();
+        $("#insert").click(function () {
+                if (checkName() && checkPhone() && checkPassword() && checkIdNumber()) {
+                    //当点击提交的时候第一件事情开始转圈
+                    var windowId = layer.load();
+                    //首先要拿到四个输入框中的内容，拿到后进行发送服务器
+                    var username = $("input:eq(0)").val();//这句话的意思是找第0个输入框所输入的内容
+                    var userPhone = $("input:eq(1)").val();
+                    var idNumber = $("input:eq(2)").val();
+                    var password = $("input:eq(3)").val();
+                    $.post("/courier/insert.do", {
+                        username: username,
+                        userPhone: userPhone,
+                        idNumber: idNumber,
+                        password: password
+                    }, function (data) {  //服务器回复的数据会到这里来
+                        //服务器数据一回复，停止转圈
+                        layer.close(windowId);
+                        layer.msg(data.result);
+                        if (data.status == 0) {
+                            //录入成功，将输入框内容清空
+                            $("input").val(""); //将所有input置空
+                        }
+                    });
 
-            $.post("/courier/insert.do",{
-                username:username,
-                userPhone:userPhone,
-                idNumber:idNumber,
-                password:password
-            },function (data){  //服务器回复的数据会到这里来
-                //服务器数据一回复，停止转圈
-                layer.close(windowId);
-                layer.msg(data.result);
-                if (data.status == 0) {
-                    //录入成功，将输入框内容清空
-                    $("input").val(""); //将所有input置空
-                }
-            });
-        });
+            }}
+        )
+        ;
     });
 </script>
 </body>

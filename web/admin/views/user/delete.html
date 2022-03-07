@@ -45,7 +45,8 @@
             </tr>
             <tr>
                 <td></td>
-                <td class="content_right"><span class="btn btn-info" id="delete">立即删除</span> <span class="btn">重置</span></td>
+                <td class="content_right"><span class="btn btn-info" id="delete">立即删除</span> <span class="btn">重置</span>
+                </td>
             </tr>
         </table>
     </div>
@@ -55,14 +56,14 @@
 <script src="/layer/layer.js"></script>
 <script>
     $(".header:eq(1),.content:eq(1)").hide();
-    $(function (){
-        $("#find").click(function (){
-            var windowId= layer.load();
-            var phone=$("#phone").val();
-            $.post("/user/find.do",{phone:phone},function (data){
+    $(function () {
+        $("#find").click(function () {
+            var windowId = layer.load();
+            var phone = $("#phone").val();
+            $.post("/user/find.do", {phone: phone}, function (data) {
                 layer.close(windowId);
                 layer.msg(data.result);
-                if (data.status==0) {
+                if (data.status == 0) {
                     $(".header:eq(1),.content:eq(1)").fadeIn(1000); //淡入查出的数据
                     $("input:eq(1)").val(data.data.username);
                     $("input:eq(2)").val(data.data.userPhone);
@@ -70,19 +71,22 @@
                     $("input:eq(4)").val(data.data.password);
                     $("input:eq(1),input:eq(2),input:eq(3),input:eq(4)").prop("disabled", true)
                 }
-            },"JSON");
+            }, "JSON");
         });
-        $("#delete").click(function (){
-            var windowId= layer.load();
-            var phone= $("input:eq(0)").val();
-            $.post("/user/delete.do",{phone:phone},function (data){
-                layer.close(windowId);
-                layer.msg(data.result);
-                if (data.status==0) {
-                    $(".header:eq(1),.content:eq(1)").hide();
-                    $("input:eq(0)").val("");
-                }
-            },"JSON");
+        $("#delete").click(function () {
+            if (confirm("确定要删除吗?")) {
+                var windowId = layer.load();
+                var phone = $("input:eq(0)").val();
+                $.post("/user/delete.do", {phone: phone}, function (data) {
+                    layer.close(windowId);
+                    layer.msg(data.result);
+                    if (data.status == 0) {
+                        $(".header:eq(1),.content:eq(1)").hide();
+                        $("input:eq(0)").val("");
+                    }
+                }, "JSON");
+            }
+
         });
     });
 </script>

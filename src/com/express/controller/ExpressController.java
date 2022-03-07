@@ -118,7 +118,7 @@ public class ExpressController {
     }
 
     @ResponseBody("/express/update.do")
-    public String update(HttpServletRequest request, HttpServletResponse response) {
+    public String update(HttpServletRequest request,HttpServletResponse response){
         int id = Integer.parseInt(request.getParameter("id"));
         String number = request.getParameter("number");
         String company = request.getParameter("company");
@@ -133,10 +133,10 @@ public class ExpressController {
         newExpress.setStatus(status);
         boolean flag = ExpressService.update(id, newExpress);
         Message msg = new Message();
-        if (flag) {
+        if(flag){
             msg.setStatus(0);
             msg.setResult("修改成功");
-        } else {
+        }else{
             msg.setStatus(-1);
             msg.setResult("修改失败");
         }

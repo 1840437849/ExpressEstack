@@ -135,7 +135,6 @@
                 "border-radius": funIconH / 2 + "px",
                 "font-size": funIconH / 2 + "px"
             });
-
         };
 
         initFunc();
@@ -160,26 +159,16 @@
         //submit arrow
         $(".submBtn").click(function () {
             var expressNum = $("#expressNum").val();//快递单号
-            $.ajax({
-                type: 'GET',
-                url: pageContextVal + '/ul/indexQueryExpress',
-                data: {'expressNum': expressNum},
-                dataType: "json",
-                success: function (data) {
-                    var jsontmp = data;
-                    switch (jsontmp.code) {
-                        case "1" :
-                            rzAlert("操作提示", jsontmp.message);
-                            break;
-                        case "0" :
-                            rzAlert("操作提示", jsontmp.message);
-                            break;
-                    }
-                },
-                error: function () {
+            console.log(expressNum);
+            if (expressNum == null || expressNum.length == 0) {
+                alert("请输入要查询的快递单号");
+            } else {
+                $.post("/wx/searchExpress.do",{
+                    expressNum:expressNum},function (data){
 
-                }
-            });
+                });
+                window.location.href="/searchExpress.html"
+            }
         });
     });
 </script>

@@ -77,17 +77,20 @@
                 });
             });
             $("#delete").click(function () {
-                var windowId = layer.load();
-                var phone = $("input:eq(0)").val();
-                $.getJSON("/courier/delete.do", {phone : phone},function (data){
-                    layer.close(windowId);
-                    layer.msg(data.result);
-                    if (data.status==0) {
-                        //当删除成功后重新隐藏
-                        $(".header:eq(1),.content:eq(1)").hide();
-                        $("input:eq(0)").val("");
-                    }
-                });
+                if (confirm("确定要删除吗?")) {
+                    var windowId = layer.load();
+                    var phone = $("input:eq(0)").val();
+                    $.getJSON("/courier/delete.do", {phone : phone},function (data){
+                        layer.close(windowId);
+                        layer.msg(data.result);
+                        if (data.status==0) {
+                            //当删除成功后重新隐藏
+                            $(".header:eq(1),.content:eq(1)").hide();
+                            $("input:eq(0)").val("");
+                        }
+                    });
+                }
+
             });
         });
 </script>

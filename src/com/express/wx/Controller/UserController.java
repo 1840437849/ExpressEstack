@@ -15,7 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
     /**
      * 短信发送功能
-     * @param req 客户端传递手机号
+     *
+     * @param req  客户端传递手机号
      * @param resp 返回短信验证码给客户端
      * @return JSON格式消息对象
      */
@@ -47,6 +48,7 @@ public class UserController {
 
     /**
      * 登陆功能
+     *
      * @param req 用户传入手机号与验证码
      * @param req 根据情况回复不同的状态码到客户端
      * @return 返回状态码与消息对象
@@ -67,22 +69,22 @@ public class UserController {
             // TODO:判断是快递员还是用户，如果都不是则默认注册为用户，如果都是则以快递员身份登录
             User user1 = UserService.findByPhone(userPhone);
             Courier courier1 = CourierService.findByPhone(userPhone);
-            if (user1 ==null && courier1==null) {
+            if (user1 == null && courier1 == null) {
                 //新注册用户
                 msg.setStatus(0);
                 User user = new User();
                 user.setUserPhone(userPhone);
                 UserService.insert(user);
-                UserUtil.setWxUser(req.getSession(),user);
-            } else if (user1!=null && courier1!=null) {
+                UserUtil.setWxUser(req.getSession(), user);
+            } else if (user1 != null && courier1 != null) {
                 //快递员登录
                 msg.setStatus(1);
-                UserUtil.setWxUser(req.getSession(),courier1);
-            } else if (user1!=null && courier1==null) {
+                UserUtil.setWxUser(req.getSession(), courier1);
+            } else if (user1 != null && courier1 == null) {
                 //用户登录
                 msg.setStatus(0);
                 UserUtil.setWxUser(req.getSession(), user1);
-            } else if (user1==null && courier1!=null) {
+            } else if (user1 == null && courier1 != null) {
                 //快递员登陆
                 msg.setStatus(1);
                 UserUtil.setWxUser(req.getSession(), courier1);
@@ -98,11 +100,12 @@ public class UserController {
 
     /**
      * 判断当前登陆的是用户还是快递员
+     *
      * @param req
      * @param resp
      * @return
      */
-    @ResponseBody("/wx/userInfo.do")
+  /*  @ResponseBody("/wx/userInfo.do")
     public String userInfo(HttpServletRequest req, HttpServletResponse resp) {
         Object user = UserUtil.getWxUser(req.getSession());
         boolean isUser = user instanceof User;
@@ -117,13 +120,28 @@ public class UserController {
         //这样就把用户身份和手机号码发送出去了
         String json = JSONUtil.toJSON(msg);
         return json;
+    }*/
+    @ResponseBody("/wx/userInfo.do")
+    public String userInfo(HttpServletRequest req, HttpServletResponse resp) {
+        Object user = UserUtil.getWxUser(req.getSession());
+        boolean isUser = user instanceof User;
+        Message msg = new Message();
+        if (isUser) {
+            msg.setStatus(0);
+            msg.setResult(((User) user).getUserPhone());
+        } else {
+            msg.setStatus(1);
+            msg.setResult(((Courier) user).getUserPhone());
+        }
+        String json = JSONUtil.toJSON(msg);
+        return json;
     }
 
     /**
      * 退出登陆
-     * @param req 销毁session
+     * @param req  销毁session
      * @param resp 回复客户端消息
-     * @return  JSON格式的消息对象
+     * @return JSON格式的消息对象
      */
     @ResponseBody("/wx/logout.do")
     public String logout(HttpServletRequest req, HttpServletResponse resp) {
